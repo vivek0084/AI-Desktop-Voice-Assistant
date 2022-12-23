@@ -1,0 +1,107 @@
+import pyttsx3
+import speech_recognition as sr
+import datetime  # built in function
+import wikipedia
+import webbrowser  # built in function
+import os  # built in function
+
+engine = pyttsx3.init('sapi5')
+voices = engine.getProperty('voices')
+engine.setProperty('voice', voices[0].id)
+
+
+def speak(audio):
+    engine.say(audio)
+    engine.runAndWait()
+
+
+def wishMe():
+    hour = int(datetime.datetime.now().hour)
+    if hour >= 0 and hour < 12:
+        speak("Hello vivek and kaushik.... Good Morning")
+
+    elif hour >= 12 and hour < 15:
+        speak("Hello vivek and kaushik....Good Afternoon")
+
+    elif hour >= 14 and hour < 19:
+        speak("Hello vivek and kaushik....Good Evening!")
+    else:
+        speak("Hello vivek and kaushik....Good Night!")
+
+    speak("Hanufa is here to help you.")
+    print('.............................................................................................')
+
+
+def takeCommand():
+    r = sr.Recognizer()
+    with sr.Microphone() as source:
+        r.adjust_for_ambient_noise(source)
+        print("Listening....")
+        r.pause_thresold = 5
+        audio = r.listen(source)
+
+    try:
+        print("Recognizing....")
+        query = r.recognize_google(audio, language='en-in')
+        print(f"User asked: {query}\n")
+
+    except Exception as e:
+        speak("Say that again please.....")
+        return 'None'
+
+    return query
+
+
+if __name__ == "__main__":
+    wishMe()
+    while True:
+        query = takeCommand().lower()
+
+        if 'wikipedia' in query:
+            speak('Searching Wikipedia...')
+            query = query.replace("wikipedia", "")
+            results = wikipedia.summary("Nara chandra babu naidu", sentences=10)
+            speak("According to Wikipedia")
+            print(results)
+            speak(results)
+
+        elif 'open youtube' in query:
+            webbrowser.open("youtube.com")
+            speak('opening youtube')
+
+        elif 'open google' in query:
+            webbrowser.open("google.com")
+            speak('opening google')
+
+        elif 'open stackoverflow' in query:
+            webbrowser.open("stackoverflow.com")
+            speak('opening stackoverflow')
+
+        elif 'play music' in query:
+            speak('enjoy the music!')
+            music_dir = "D:\python music"
+            songs = os.listdir(music_dir)
+            os.startfile(os.path.join(music_dir, songs[1]))
+
+        elif 'what is the time' in query:
+            strTime = datetime.datetime.now().strftime("%H:%M")
+            speak(f"the time is {strTime}")
+
+        elif 'open netflix' in query:
+            speak("Let's watch the Peaky blinders on netflix")
+            webbrowser.open("www.netflix.com")
+
+        elif 'open amazon prime' in query:
+            speak('Opening amazon prime')
+            webbrowser.open('www.amazonprime.com')
+
+        elif 'open disney hotstar' in query:
+            speak('Initiating the hotstar')
+            webbrowser.open('www.hotstar.com')
+
+        elif 'how are you' in query:
+            speak('I am fine, how about you?')
+
+        elif 'quit' in query:
+            speak('Quitting the program')
+            exit()
